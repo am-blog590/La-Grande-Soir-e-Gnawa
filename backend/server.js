@@ -1,25 +1,29 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const sequelize = require("./src/config/database");
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import sequelize from "./src/config/database.js";
+
+import eventRoutes from "./src/routes/event.js";
+import artistRoutes from "./src/routes/artists.js";
+import bookingRoutes from "./src/routes/router.booking.js";
+import authRoutes from "./src/routes/auth.js";
 
 dotenv.config();
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("API Running...");
-});
+// Routes
+app.use("/api/event", eventRoutes);
+app.use("/api/artists", artistRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/auth", authRoutes);
 
-app.get("/test-db", async (req, res) => {
-  try {
-    await sequelize.authenticate();
-    res.json({ status: "ok", message: "DB connected" });
-  } catch (error) {
-    res.json({ status: "error", error: error.message });
-  }
-});
-
-app.listen(process.env.PORT, () => {
-  console.log(`🚀 Server running on port ${process.env.PORT}`);
-});
+// DB + server start
+sequelize.sync().then(() => {
+  console.log("DB connected");
+  app.listen(3000, () => {
+    console.log("Server running on port 3000");
+  });
+}).catch(err => console.log("Database connection failed:", err));

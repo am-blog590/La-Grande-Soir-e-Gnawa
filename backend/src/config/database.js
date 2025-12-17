@@ -1,5 +1,6 @@
-const { Sequelize } = require("sequelize");
-require("dotenv").config();
+import { Sequelize } from "sequelize";
+import dotenv from "dotenv";
+dotenv.config();
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -7,18 +8,10 @@ const sequelize = new Sequelize(
   process.env.DB_PASS,
   {
     host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
     dialect: "postgres",
-    logging: false,
+    logging: false
   }
 );
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("✅ Database connected successfully!");
-  })
-  .catch((err) => {
-    console.log("❌ Database connection failed:", err.message);
-  });
-
-module.exports = sequelize;
+export default sequelize;
